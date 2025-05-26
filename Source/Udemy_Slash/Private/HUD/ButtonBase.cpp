@@ -17,6 +17,8 @@ void UButtonBase::NativePreConstruct()
 	Super::NativePreConstruct();
 	BOX_Root->SetHeightOverride(BoxHeight);
 	BOX_Root->SetWidthOverride(BoxWidth);
+	
 }
+
 
 

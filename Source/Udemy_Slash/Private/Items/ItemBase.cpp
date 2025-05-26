@@ -22,9 +22,17 @@ AItemBase::AItemBase()
 
 void AItemBase::InteractInput(class ASlashCharacter* Player)
 {
-	Player->Inventory->AddWeaponToInventory(WeaponsArray[0]);
-	GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "Interacting with player");
+	if (WeaponsArray.Num() > 1)
+	{
+		int32 ItemSelection = FMath::RandRange(0, WeaponsArray.Num() - 1);
+		Player->Inventory->AddWeaponToInventory(WeaponsArray[ItemSelection]);
+	}
+	else
+	{
+		Player->Inventory->AddWeaponToInventory(WeaponsArray[0]);
+	}
 	Destroy();
+	
 }
 
 

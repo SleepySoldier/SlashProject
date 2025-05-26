@@ -12,6 +12,8 @@ class UTextBlock;
 /**
  * 
  */
+
+
 UCLASS()
 class UDEMY_SLASH_API UButtonBase : public USlashUserWidget
 {
@@ -35,7 +37,9 @@ public:
 
 	void SetText(const FText& Text);
 
+
 protected:
 
 	virtual void NativePreConstruct() override;
+
 };

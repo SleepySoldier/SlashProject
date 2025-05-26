@@ -40,6 +40,10 @@ public:
 	virtual void PlayDeathAnimation();
 	
 	void OpenMenu(TObjectPtr<ASlashCharacter> Player);
+
+	void InitializeInventory();
+
+	void AddItemToInventory();
 	
 protected:
 	UFUNCTION()
@@ -76,6 +80,12 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UButtonBase> ItemButton;
+	UPROPERTY()
+	TArray<UButtonBase*> ItemButtons;
+
+
+
+	
 
 
 

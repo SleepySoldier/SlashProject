@@ -292,9 +292,6 @@ void ASlashCharacter::Sheath() //Z
 
 void ASlashCharacter::OpenMenu()
 {
-	
-	//GetController()->SetIgnoreLookInput(true);
-	//GetController()->SetIgnoreMoveInput(true);
 	APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
 	PC->SetInputMode(FInputModeUIOnly());
 	PC->SetShowMouseCursor(true);
@@ -387,7 +384,7 @@ void ASlashCharacter::PlayEquipMontage(const FName& SectionName)
 	}
 }
 
-
+//Depricated
 void ASlashCharacter::EquipWeapon(AWeapon* Weapon)
 {
 	Weapon->Equip(GetMesh(), FName("WeaponSocket"), this, this);
@@ -475,6 +472,8 @@ void ASlashCharacter::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 void ASlashCharacter::EquipWeapon(UStaticMesh* NewWeaponMesh)
 {
 	WeaponMesh->SetStaticMesh(NewWeaponMesh);
+	CharacterState = ECharacterState::ECS_EquippedOneHanded;
+	
 }
 
 void ASlashCharacter::SetHUDHealth() const

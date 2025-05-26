@@ -68,25 +68,37 @@ void USlashOverlay::OpenMenu(TObjectPtr<ASlashCharacter> Player)
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("OpenMenuOverlay Called"));
 	W_Inventory->BTN_Close->BTN_Button->OnClicked.AddDynamic(this, &USlashOverlay::OnClosePressed);
 	TArray WeaponArray = PlayerRef->Inventory->WeaponDA;
-	for (TObjectPtr<UWeaponData> Weapon : WeaponArray)
+	for (const auto Weapon : WeaponArray)
 	{
 		SelectedWeapon = Weapon->WeaponMesh;
 		UButtonBase* Button = CreateWidget<UButtonBase>(this, ItemButton);
+		
+		ItemButtons.Add(Button);
 		//TODO: Replace Text with button image
 		Button->SetText(Weapon->WeaponName);
 		if (GridCol == 5)
 		{
-			GridRow += GridRow;
+			GridRow ++;
 			GridCol = 0;
+			W_Inventory->GRID_ItemSlot->AddChildToUniformGrid(Button, GridRow, GridCol);
+			GridCol ++;
 		}
 		else
 		{
 			W_Inventory->GRID_ItemSlot->AddChildToUniformGrid(Button, GridRow, GridCol);
-			GridCol += GridCol;
+			GridCol++;
 			Button->BTN_Button->OnClicked.AddDynamic(this, &USlashOverlay::OnWeaponSelected);
 		}
 	}
 	W_Inventory->SetVisibility(ESlateVisibility::Visible);
+}
+
+void USlashOverlay::InitializeInventory()
+{
+}
+
+void USlashOverlay::AddItemToInventory()
+{
 }
 
 void USlashOverlay::OnClosePressed()
@@ -97,6 +109,11 @@ void USlashOverlay::OnClosePressed()
 	APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
 	PC->SetInputMode(FInputModeGameOnly());
 	PC->SetShowMouseCursor(false);
+	W_Inventory->BTN_Close->BTN_Button->OnClicked.RemoveDynamic(this, &USlashOverlay::OnClosePressed);
+	for (auto Button : ItemButtons)
+	{
+		Button->BTN_Button->OnClicked.RemoveDynamic(this, &USlashOverlay::OnWeaponSelected);
+	}
 }
 
 void USlashOverlay::OnWeaponSelected()
