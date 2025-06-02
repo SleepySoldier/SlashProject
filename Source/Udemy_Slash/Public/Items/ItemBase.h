@@ -20,11 +20,11 @@ public:
 	// Sets default values for this actor's properties
 	AItemBase();
 	
-	//UFUNCTION()
-	//virtual void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	virtual void InteractInput(class ASlashCharacter* Player) override;
 	UPROPERTY(EditAnywhere)
 	TArray<TObjectPtr<UWeaponData>> WeaponsArray;
+	UFUNCTION()
+	virtual void OnSeeInteractable(bool bHasSeen) override;
 protected:
 
 private:

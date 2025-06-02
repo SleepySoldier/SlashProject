@@ -35,6 +35,16 @@ void AItemBase::InteractInput(class ASlashCharacter* Player)
 	
 }
 
+void AItemBase::OnSeeInteractable(bool bHasSeen)
+{
+	IPickupInterface::OnSeeInteractable(bHasSeen);
+	if (bHasSeen)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("You are interacting with this item."));
+	}
+}
+
+
 
 
 

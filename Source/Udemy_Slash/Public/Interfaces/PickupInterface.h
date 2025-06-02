@@ -30,4 +30,6 @@ public:
 	virtual void PickupHeal(class AHealthPickup* HealthPickup);
 
 	virtual void InteractInput(class ASlashCharacter* Player);
+	
+	virtual void OnSeeInteractable(bool bHasSeen = false);
 };

@@ -25,4 +25,12 @@ void IPickupInterface::InteractInput(class ASlashCharacter* Player)
 {
 }
 
+void IPickupInterface::OnSeeInteractable(bool bHasSeen)
+{
+}
+
+
+
+
+
 

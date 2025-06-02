@@ -45,11 +45,6 @@ public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 	virtual void Tick(float DeltaTime) override;
-	
-	UFUNCTION()
-	void BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	UFUNCTION()
-	void OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
     
     virtual void EquipWeapon(UStaticMesh* NewWeaponMesh) override;
 
@@ -155,6 +150,12 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<AActor> InteractTarget;
+
+	UFUNCTION(BlueprintCallable)
+	void OverlapInteractable(AActor* OtherActor);
+
+	UFUNCTION(BlueprintCallable)
+	void StopOverlapInteractable(AActor* OtherActor);
 	
 
 	
@@ -173,6 +174,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = Outfit)
 	TObjectPtr<USkeletalMeshComponent> Hair;
 
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class USphereComponent> InteractionSphere;
+
 	UPROPERTY(VisibleInstanceOnly)
 	TObjectPtr<AItem> OverlappingItem;
 
@@ -185,5 +189,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	float LockOnRadius = 400.f;
 
+	UPROPERTY()
+	TArray <AActor*> InteractActors;
 
 };

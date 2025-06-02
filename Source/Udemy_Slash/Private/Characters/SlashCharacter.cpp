@@ -13,6 +13,7 @@
 #include "HUD/SlashOverlay.h"
 #include "Components/AttributeComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/SphereComponent.h"
 #include "Items/Soul.h"
 #include "Items/Treasure.h"
 #include "Items/HealthPickup.h"
@@ -36,10 +37,11 @@ ASlashCharacter::ASlashCharacter()
 	CameraBoom->SetupAttachment(GetRootComponent());
 	CameraBoom->TargetArmLength = 200.f;
 	
-
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(CameraBoom);
-	
+
+	InteractionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("InteractionSphere"));
+	InteractionSphere->SetupAttachment(GetMesh());
 
 	Hair = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Hair"));
 	Hair->SetupAttachment(GetMesh(), FName("HairSocket"));
@@ -51,8 +53,6 @@ ASlashCharacter::ASlashCharacter()
 void ASlashCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ASlashCharacter::BeginOverlap);
-	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &ASlashCharacter::OnEndOverlap);
 	InitializePlayer();
 	//CheckTraceTypeQuery();
 
@@ -70,7 +70,7 @@ void ASlashCharacter::CheckTraceTypeQuery()
 		UE_LOG(LogTemp, Warning, TEXT("ETraceTypeQuery Name: %s"), *EnumName);
 		UE_LOG(LogTemp, Warning, TEXT("Collision Channel Name: %s"), *ChannelName);
 	}
-	/*
+	
 	for (int32 i = 0; i < EObjectTypeQuery::ObjectTypeQuery_MAX; ++i)
 	{
 		EObjectTypeQuery EnumValue = static_cast<EObjectTypeQuery>(i);
@@ -79,7 +79,7 @@ void ASlashCharacter::CheckTraceTypeQuery()
 		UE_LOG(LogTemp, Warning, TEXT("EObjectTypeQuery Name: %s"), *EnumName);
 		UE_LOG(LogTemp, Warning, TEXT("Collision Channel Name: %s"), *ChannelName);
 	}
-	*/
+	
 }
 
 void ASlashCharacter::InitializePlayer()
@@ -180,15 +180,7 @@ void ASlashCharacter::Look(const FInputActionValue& Value)
 
 void ASlashCharacter::Interact() // E
 {
-	
-	if (InteractTarget && InteractTarget->GetClass()->ImplementsInterface(UPickupInterface::StaticClass()))
-	{
-		IPickupInterface* Pickup = Cast<IPickupInterface>(InteractTarget);
-        if (Pickup)
-       	{
-       		Pickup->InteractInput(this);
-       	}
-	}
+	Cast<IPickupInterface>(InteractActors.Last())->InteractInput(this);;
 	
 	AWeapon* OverlappingWeapon = Cast<AWeapon>(OverlappingItem);
 	if (OverlappingWeapon) 
@@ -426,6 +418,25 @@ void ASlashCharacter::Jump()
 }
 
 
+void ASlashCharacter::OverlapInteractable(AActor* OtherActor)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("StartInteracting."));
+	InteractActors.Add(OtherActor);
+	Cast<IPickupInterface>(InteractActors.Last())->OnSeeInteractable(true);
+}
+
+void ASlashCharacter::StopOverlapInteractable(AActor* OtherActor)
+{
+	for (AActor* Actor : InteractActors)
+	{
+		if (Actor == OtherActor)
+		{
+			Cast<IPickupInterface>(Actor)->OnSeeInteractable(false);
+			InteractActors.Remove(OtherActor);
+		}
+	}
+}
+
 bool ASlashCharacter::isUnoccupied()
 {
 	return ActionState == EActionState::EAS_Unoccupied;
@@ -448,25 +459,6 @@ void ASlashCharacter::Tick(float DeltaTime)
 		Attributes->RegenStamina(DeltaTime);
 		SlashOverlay->SetStaminaBarPercent(Attributes->GetStaminaPercent());
 	}
-}
-
-void ASlashCharacter::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	if (OtherActor->ActorHasTag(FName("Interactable")))
-	{
-		InteractTarget = OtherActor;
-	}
-}
-
-void ASlashCharacter::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	if (InteractTarget == !nullptr)
-	{
-		InteractTarget = nullptr;
-	}
-
 }
 
 void ASlashCharacter::EquipWeapon(UStaticMesh* NewWeaponMesh)
