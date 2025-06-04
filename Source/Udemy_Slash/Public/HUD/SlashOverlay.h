@@ -47,7 +47,7 @@ protected:
 	UPROPERTY()
 	TObjectPtr<ASlashCharacter> PlayerRef;
 	UPROPERTY()
-	TObjectPtr<UStaticMesh> SelectedWeapon;
+	UStaticMesh* SelectedWeapon;
 private:
 
 	UPROPERTY(meta = (BindWidget))

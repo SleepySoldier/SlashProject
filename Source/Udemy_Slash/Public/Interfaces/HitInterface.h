@@ -27,4 +27,5 @@ public:
 	void GetHit(const FVector& ImpactPoint, AActor* Hitter);
 
 
+	
 };

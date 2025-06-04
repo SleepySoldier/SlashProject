@@ -116,7 +116,6 @@ protected:
 	void LockOnActive();
 
 	/** * Combat */
-	void EquipWeapon(AWeapon* Weapon);
 	virtual void AttackEnd() override;
 
 	virtual void DodgeEnd() override;

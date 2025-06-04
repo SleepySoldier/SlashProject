@@ -18,9 +18,14 @@ UInventoryComponent::UInventoryComponent()
 
 void UInventoryComponent::AddWeaponToInventory(UWeaponData* NewWeapon)
 {
-	WeaponDA.Add(NewWeapon);
+	WeaponsArray.Add(NewWeapon);
 	FString WeaponName = NewWeapon->GetName();
 	GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, FString::Printf(TEXT("WeaponName: %s"), *WeaponName));
+}
+
+UStaticMesh* UInventoryComponent::SetInitialWeapon()
+{
+	return WeaponsArray[0]->WeaponMesh;
 }
 
 

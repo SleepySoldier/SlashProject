@@ -65,13 +65,6 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UAISenseConfig_Sight> SightConfig;
 	
-
-	/* Components */
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<class AWeapon> WeaponClass;
-
-
 	/* Navigation */
 
 
@@ -131,9 +124,7 @@ private:
 
 	FTimerHandle AttackTimer;
 	FTimerHandle PatrolTimer;
-
-
-	void SpawnDefaultWeapon();
+	
 	void InitializeEnemy();
 
 	UPROPERTY(EditAnywhere, Category = "Combat")

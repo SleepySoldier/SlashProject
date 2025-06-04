@@ -185,20 +185,6 @@ void ASlashCharacter::Interact() // E
 		Cast<IPickupInterface>(InteractActors.Last())->InteractInput(this);
 	}
 	
-	
-	
-	
-	/*
-	AWeapon* OverlappingWeapon = Cast<AWeapon>(OverlappingItem);
-	if (OverlappingWeapon) 
-	{
-		if (EquippedWeapon)
-		{
-			EquippedWeapon->Destroy();
-		}
-		EquipWeapon(OverlappingWeapon);
-	}
-	*/
 }
 //LMB
 void ASlashCharacter::Attack() // RMB
@@ -383,15 +369,6 @@ void ASlashCharacter::PlayEquipMontage(const FName& SectionName)
 	}
 }
 
-//Depricated
-void ASlashCharacter::EquipWeapon(AWeapon* Weapon)
-{
-	Weapon->Equip(GetMesh(), FName("WeaponSocket"), this, this);
-	CharacterState = ECharacterState::ECS_EquippedOneHanded;
-	OverlappingItem = nullptr;
-	EquippedWeapon = Weapon;
-}
-
 void ASlashCharacter::AttackEnd()
 {
 	ActionState = EActionState::EAS_Unoccupied;
@@ -468,7 +445,7 @@ void ASlashCharacter::Tick(float DeltaTime)
 
 void ASlashCharacter::EquipWeapon(UStaticMesh* NewWeaponMesh)
 {
-	WeaponMesh->SetStaticMesh(NewWeaponMesh);
+	Super::EquipWeapon(NewWeaponMesh);
 	CharacterState = ECharacterState::ECS_EquippedOneHanded;
 }
 

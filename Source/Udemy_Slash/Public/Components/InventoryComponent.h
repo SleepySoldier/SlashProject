@@ -45,13 +45,16 @@ class UDEMY_SLASH_API UInventoryComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UInventoryComponent();
-	UPROPERTY()
-	TArray<TObjectPtr<UWeaponData>> WeaponDA;
+	UPROPERTY(EditDefaultsOnly)
+	TArray<UWeaponData*> WeaponsArray;
 
 	UFUNCTION()
 	virtual void AddWeaponToInventory(UWeaponData* NewWeapon);
 	
 	TArray<FItemInfo> Items;
+
+	UFUNCTION()
+	UStaticMesh* SetInitialWeapon();
 
 private:
 	int32 InventorySize = 30;

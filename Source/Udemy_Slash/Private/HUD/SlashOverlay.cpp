@@ -62,12 +62,12 @@ void USlashOverlay::PlayDeathAnimation()
 void USlashOverlay::OpenMenu(ASlashCharacter* Player)
 {
 	PlayerRef = Player;
-	TArray WeaponArray = PlayerRef->Inventory->WeaponDA;
+	TArray WeaponArray = PlayerRef->Inventory->WeaponsArray;
 	W_Inventory->RefreshInventory(WeaponArray);
 	
 	for (const auto Weapon : WeaponArray)
 	{
-		SelectedWeapon = Weapon->WeaponMesh;
+		SelectedWeapon = (Weapon->WeaponMesh);
 		W_Inventory->OnWeaponSelected.AddLambda([this, Player](UWeaponData*){Player->EquipWeapon(SelectedWeapon);});
 	}
 	

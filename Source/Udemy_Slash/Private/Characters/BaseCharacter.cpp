@@ -2,12 +2,11 @@
 
 
 #include "Characters/BaseCharacter.h"
-#include "Components/BoxComponent.h"
-#include "Items/Weapons/Weapon.h"
 #include "Components/AttributeComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InventoryComponent.h"
+#include "Engine/DamageEvents.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Udemy_Slash/Udemy_Slash.h"
 
@@ -24,22 +23,23 @@ ABaseCharacter::ABaseCharacter()
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Weapon, ECR_Overlap);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_MeleeWeapon, ECR_Block);
 
-	GetMesh()->SetCollisionObjectType(ECollisionChannel::ECC_Pawn);
+	GetMesh()->SetCollisionObjectType(ECC_Pawn);
 	GetMesh()->SetCollisionResponseToChannel(ECC_MeleeWeapon, ECR_Block);
-	GetMesh()->SetCollisionResponseToChannel(ECC_Weapon, ECR_Overlap);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Weapon, ECR_Block);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	GetMesh()->SetGenerateOverlapEvents(true);
 
 	WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>("Weapon");
 	WeaponMesh->SetupAttachment(GetMesh(), WeaponGripSocket);
+	WeaponMesh->SetCollisionObjectType(ECC_Weapon);
+	WeaponMesh->SetCollisionResponseToChannel(ECC_MeleeWeapon, ECR_Overlap);
 	
-
 }
 
 void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	if (!Inventory->WeaponsArray.IsEmpty()) EquipWeapon(Inventory->SetInitialWeapon());
 }
 void ABaseCharacter::Attack()
 {
@@ -210,6 +210,7 @@ void ABaseCharacter::DodgeEnd()
 
 void ABaseCharacter::EquipWeapon(UStaticMesh* NewWeaponMesh)
 {
+	WeaponMesh->SetStaticMesh(NewWeaponMesh);
 }
 
 void ABaseCharacter::OnPossess(APawn* InPawn)
@@ -237,7 +238,6 @@ float ABaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 	UGameplayStatics::SpawnEmitterAtLocation(this, HitParticles, HitImpactPoint);
 	UGameplayStatics::PlaySoundAtLocation(this, HitSound, HitImpactPoint);
 	HandleDamage(DamageAmount);
-	SetWeaponCollisionEnabled(ECollisionEnabled::NoCollision);
 	StopActiveMontages();
 	if (isAlive())
 	{
@@ -249,13 +249,7 @@ float ABaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 
 void ABaseCharacter::GetHit_Implementation(const FVector& ImpactPoint, AActor* Hitter)
 {
+	const FDamageEvent DamageEvent;
+	TakeDamage(50.f, DamageEvent, Hitter->GetInstigatorController(), Hitter);
+}
 
-}
-void ABaseCharacter::SetWeaponCollisionEnabled(ECollisionEnabled::Type CollisionEnabled)
-{
-	if (EquippedWeapon && EquippedWeapon->GetWeaponBox())
-	{
-		EquippedWeapon->GetWeaponBox()->SetCollisionEnabled(CollisionEnabled);
-		EquippedWeapon->IgnoreActors.Empty();
-	}
-}

@@ -45,25 +45,12 @@ void AEnemy::BeginPlay()
 	
 }
 
-void AEnemy::SpawnDefaultWeapon()
-{
-	UWorld* World = GetWorld();
-	if (World && WeaponClass)
-	{
-		AWeapon* DefaultWeapon = World->SpawnActor<AWeapon>(WeaponClass);
-		DefaultWeapon->Equip(GetMesh(), FName("S_Weapon"), this, this);
-		EquippedWeapon = DefaultWeapon;
-
-	}
-}
-
 void AEnemy::InitializeEnemy()
 {
 	Tags.Add(FName("EngagableTarget"));
 	EnemyController = Cast<AAIController>(GetController());
 	HideHealthBar();
 	MoveToTarget(PatrolTarget);
-	SpawnDefaultWeapon();
 }
 
 
@@ -75,7 +62,6 @@ void AEnemy::Death_Implementation()
 	ClearPatrolTimer();
 	HideHealthBar();
 	SetLifeSpan(DeathLifeSpan);
-	SetWeaponCollisionEnabled(ECollisionEnabled::NoCollision);
 	SpawnSoul();
 
 }

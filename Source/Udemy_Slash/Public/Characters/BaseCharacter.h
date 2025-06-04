@@ -7,6 +7,7 @@
 #include "Interfaces/HitInterface.h"
 #include "BaseCharacter.generated.h"
 
+class UWeaponData;
 class UAttributeComponent;
 class UAnimMontage;
 class UInventoryComponent;
@@ -32,10 +33,7 @@ protected:
 	virtual void Attack();
 	UFUNCTION(BlueprintNativeEvent)
 	void Death();
-
-	UFUNCTION(BlueprintCallable)
-	void SetWeaponCollisionEnabled(ECollisionEnabled::Type CollisionEnabled);
-
+	
 	/*
 	Play montage functions
 	*/
@@ -62,8 +60,8 @@ protected:
 	class AWeapon* EquippedWeapon;
 	
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UStaticMeshComponent> WeaponMesh;
-
+	UStaticMeshComponent* WeaponMesh;
+	
 	UPROPERTY(EditAnywhere, Category = "DefaultSetup")
 	FName WeaponGripSocket = FName("WeaponSocket");
 	
