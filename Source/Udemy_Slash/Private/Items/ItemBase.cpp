@@ -7,6 +7,8 @@
 #include "Components/InventoryComponent.h"
 #include "Components/SphereComponent.h"
 
+
+
 // Sets default values
 AItemBase::AItemBase()
 {
@@ -22,6 +24,7 @@ AItemBase::AItemBase()
 
 void AItemBase::InteractInput(class ASlashCharacter* Player)
 {
+	SlashCharacter = Player;
 	if (WeaponsArray.Num() > 1)
 	{
 		int32 ItemSelection = FMath::RandRange(0, WeaponsArray.Num() - 1);
@@ -32,7 +35,6 @@ void AItemBase::InteractInput(class ASlashCharacter* Player)
 		Player->Inventory->AddWeaponToInventory(WeaponsArray[0]);
 	}
 	Destroy();
-	
 }
 
 void AItemBase::OnSeeInteractable(bool bHasSeen)
@@ -43,6 +45,7 @@ void AItemBase::OnSeeInteractable(bool bHasSeen)
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("You are interacting with this item."));
 	}
 }
+
 
 
 

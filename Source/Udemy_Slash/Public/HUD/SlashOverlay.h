@@ -39,18 +39,11 @@ public:
 
 	virtual void PlayDeathAnimation();
 	
-	void OpenMenu(TObjectPtr<ASlashCharacter> Player);
+	void OpenMenu(ASlashCharacter* Player);
 
-	void InitializeInventory();
-
-	void AddItemToInventory();
 	
 protected:
-	UFUNCTION()
-	void OnClosePressed();
-	UFUNCTION()
-	void OnWeaponSelected();
-
+	
 	UPROPERTY()
 	TObjectPtr<ASlashCharacter> PlayerRef;
 	UPROPERTY()

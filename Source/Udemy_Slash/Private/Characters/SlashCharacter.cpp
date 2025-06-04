@@ -180,8 +180,15 @@ void ASlashCharacter::Look(const FInputActionValue& Value)
 
 void ASlashCharacter::Interact() // E
 {
-	Cast<IPickupInterface>(InteractActors.Last())->InteractInput(this);;
+	if (!InteractActors.IsEmpty())
+	{
+		Cast<IPickupInterface>(InteractActors.Last())->InteractInput(this);
+	}
 	
+	
+	
+	
+	/*
 	AWeapon* OverlappingWeapon = Cast<AWeapon>(OverlappingItem);
 	if (OverlappingWeapon) 
 	{
@@ -191,6 +198,7 @@ void ASlashCharacter::Interact() // E
 		}
 		EquipWeapon(OverlappingWeapon);
 	}
+	*/
 }
 //LMB
 void ASlashCharacter::Attack() // RMB
@@ -287,7 +295,6 @@ void ASlashCharacter::OpenMenu()
 	APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
 	PC->SetInputMode(FInputModeUIOnly());
 	PC->SetShowMouseCursor(true);
-	
 	SlashOverlay->OpenMenu(this);
 }
 
@@ -417,24 +424,22 @@ void ASlashCharacter::Jump()
 	}
 }
 
-
+// See interactable icon, get reference.
 void ASlashCharacter::OverlapInteractable(AActor* OtherActor)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("StartInteracting."));
-	InteractActors.Add(OtherActor);
+	InteractActors.AddUnique(OtherActor);
 	Cast<IPickupInterface>(InteractActors.Last())->OnSeeInteractable(true);
 }
 
 void ASlashCharacter::StopOverlapInteractable(AActor* OtherActor)
 {
-	for (AActor* Actor : InteractActors)
+	if (InteractActors.Contains(OtherActor))
 	{
-		if (Actor == OtherActor)
-		{
-			Cast<IPickupInterface>(Actor)->OnSeeInteractable(false);
-			InteractActors.Remove(OtherActor);
-		}
+		Cast<IPickupInterface>(OtherActor)->OnSeeInteractable(false);
+		InteractActors.Remove(OtherActor);
 	}
+
 }
 
 bool ASlashCharacter::isUnoccupied()
@@ -465,7 +470,6 @@ void ASlashCharacter::EquipWeapon(UStaticMesh* NewWeaponMesh)
 {
 	WeaponMesh->SetStaticMesh(NewWeaponMesh);
 	CharacterState = ECharacterState::ECS_EquippedOneHanded;
-	
 }
 
 void ASlashCharacter::SetHUDHealth() const

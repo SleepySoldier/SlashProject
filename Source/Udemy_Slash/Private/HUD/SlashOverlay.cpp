@@ -3,16 +3,13 @@
 
 #include "HUD/SlashOverlay.h"
 #include "Characters/SlashCharacter.h"
-#include "Components/Button.h"
 #include "Components/InventoryComponent.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
 #include "Components/UniformGridPanel.h"
-#include "HUD/ButtonWidget_Editor.h"
 #include "HUD/GameOverOverlay.h"
 #include "HUD/InventoryWidget.h"
 #include "Items/Weapons/WeaponData.h"
-#include "Kismet/GameplayStatics.h"
 
 
 void USlashOverlay::SetHealthBarPercent(float Percent)
@@ -62,64 +59,22 @@ void USlashOverlay::PlayDeathAnimation()
 	
 }
 
-void USlashOverlay::OpenMenu(TObjectPtr<ASlashCharacter> Player)
+void USlashOverlay::OpenMenu(ASlashCharacter* Player)
 {
 	PlayerRef = Player;
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("OpenMenuOverlay Called"));
-	W_Inventory->BTN_Close->BTN_Button->OnClicked.AddDynamic(this, &USlashOverlay::OnClosePressed);
 	TArray WeaponArray = PlayerRef->Inventory->WeaponDA;
+	W_Inventory->RefreshInventory(WeaponArray);
+	
 	for (const auto Weapon : WeaponArray)
 	{
 		SelectedWeapon = Weapon->WeaponMesh;
-		UButtonBase* Button = CreateWidget<UButtonBase>(this, ItemButton);
-		
-		ItemButtons.Add(Button);
-		//TODO: Replace Text with button image
-		Button->SetText(Weapon->WeaponName);
-		if (GridCol == 5)
-		{
-			GridRow ++;
-			GridCol = 0;
-			W_Inventory->GRID_ItemSlot->AddChildToUniformGrid(Button, GridRow, GridCol);
-			GridCol ++;
-		}
-		else
-		{
-			W_Inventory->GRID_ItemSlot->AddChildToUniformGrid(Button, GridRow, GridCol);
-			GridCol++;
-			Button->BTN_Button->OnClicked.AddDynamic(this, &USlashOverlay::OnWeaponSelected);
-		}
+		W_Inventory->OnWeaponSelected.AddLambda([this, Player](UWeaponData*){Player->EquipWeapon(SelectedWeapon);});
 	}
+	
 	W_Inventory->SetVisibility(ESlateVisibility::Visible);
 }
 
-void USlashOverlay::InitializeInventory()
-{
-}
 
-void USlashOverlay::AddItemToInventory()
-{
-}
-
-void USlashOverlay::OnClosePressed()
-{
-	W_Inventory->SetVisibility(ESlateVisibility::Hidden);
-	GridCol = 0;
-	GridRow = 0;
-	APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
-	PC->SetInputMode(FInputModeGameOnly());
-	PC->SetShowMouseCursor(false);
-	W_Inventory->BTN_Close->BTN_Button->OnClicked.RemoveDynamic(this, &USlashOverlay::OnClosePressed);
-	for (auto Button : ItemButtons)
-	{
-		Button->BTN_Button->OnClicked.RemoveDynamic(this, &USlashOverlay::OnWeaponSelected);
-	}
-}
-
-void USlashOverlay::OnWeaponSelected()
-{
-	PlayerRef->EquipWeapon(SelectedWeapon);
-}
 
 
 

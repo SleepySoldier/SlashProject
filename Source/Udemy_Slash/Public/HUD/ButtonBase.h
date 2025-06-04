@@ -6,6 +6,11 @@
 #include "HUD/SlashUserWidget.h"
 #include "ButtonBase.generated.h"
 
+class UWeaponData;
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnItemButtonClicked, UWeaponData*);
+
+
+
 class UButton;
 class USizeBox;
 class UTextBlock;
@@ -34,12 +39,28 @@ public:
 	TObjectPtr<UButton> BTN_Button;
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> TXT_ButtonText;
-
-	void SetText(const FText& Text);
-
+	
+	UFUNCTION()
+	void SetText(const FText& Text) const;
+	
+	UFUNCTION()
+	void OnClicked();
+	
+	FOnItemButtonClicked OnButtonClicked;
+	
+	UPROPERTY()
+	UWeaponData* WeaponInfo;
 
 protected:
 
 	virtual void NativePreConstruct() override;
+	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class UInventoryWidget> InventoryWidget;
+
+
+
 
 };

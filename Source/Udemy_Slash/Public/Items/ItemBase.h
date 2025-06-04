@@ -25,13 +25,16 @@ public:
 	TArray<TObjectPtr<UWeaponData>> WeaponsArray;
 	UFUNCTION()
 	virtual void OnSeeInteractable(bool bHasSeen) override;
-protected:
 
 private:
+
+	
 	UPROPERTY(EditAnywhere, Category = "Defaults")
 	TObjectPtr<UNiagaraComponent> ItemEffect;
 	UPROPERTY(EditAnywhere, Category = "Defaults")
 	TObjectPtr<USphereComponent> SphereOverlap;
+	UPROPERTY()
+	ASlashCharacter* SlashCharacter;
 	
 
 
